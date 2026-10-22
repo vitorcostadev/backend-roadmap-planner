@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#12192a">
+  <meta name="description" content="Plano pessoal de 203 aulas para dominar fundamentos, APIs Java Spring Boot e engenharia backend.">
+  <title>Orbit — Plano Backend · Vitor Costa</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand"><div class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></div><div><strong>orbit<span>.</span></strong><small>STUDY OS / BACKEND</small></div></div>
+    <div class="workspace-label">SEU ESPAÇO</div>
+    <nav class="nav" aria-label="Navegação principal">
+      <button data-route="dashboard" class="nav-link active"><span class="nav-icon">▦</span>Visão geral</button>
+      <button data-route="calendar" class="nav-link"><span class="nav-icon">▦</span>Calendário <span class="nav-trail" id="calendar-count">203</span></button>
+      <button data-route="roadmap" class="nav-link"><span class="nav-icon">◈</span>Trilha de estudo</button>
+      <button data-route="resources" class="nav-link"><span class="nav-icon">▤</span>Biblioteca</button>
+      <button data-route="challenges" class="nav-link"><span class="nav-icon">◇</span>Desafios</button>
+    </nav>
+    <div class="workspace-label secondary-label">PROJETO FINAL</div>
+    <nav class="nav" aria-label="Projeto">
+      <button data-route="project" class="nav-link"><span class="nav-icon">⬡</span>LigaLab API</button>
+      <button data-route="validation" class="nav-link"><span class="nav-icon">☷</span>Validação</button>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="sidebar-mission"><span class="mission-glow"></span><div class="sm-cap">SEU FOCO</div><strong>Construa. Teste.<br>Compartilhe.</strong><p>203 aulas, um projeto de verdade.</p><button data-route="project">Ver projeto <span>↗</span></button></div>
+      <div class="sidebar-user"><div class="avatar">VC</div><div><strong>Vitor Costa</strong><small>Backend journey</small></div><span class="status-dot"></span></div>
+    </div>
+  </aside>
+  <div class="workspace">
+    <header class="topbar">
+      <div class="left-header"><button class="mobile-menu icon-btn" id="open-sidebar" aria-label="Abrir menu">☰</button><span class="breadcrumb">Meu espaço</span><span class="breadcrumb-sep">/</span><span class="breadcrumb-active" id="route-breadcrumb">Visão geral</span></div>
+      <div class="header-actions"><div class="today-pill" id="top-date"></div><button class="icon-btn" id="theme-toggle" title="Alternar tema" aria-label="Alternar tema">◐</button><button class="btn btn-ghost export-btn" id="export-btn"><span>⇩</span> Exportar progresso</button><button class="btn btn-primary" id="settings-btn"><span>⚙</span> Planejamento</button></div>
+    </header>
+    <main id="main" tabindex="-1" class="main-content"></main>
+    <footer class="footer"><span>ORBIT / STUDY OS <span class="footer-dot">✦</span> Feito para evoluir um dia por vez.</span><span>Dados salvos neste navegador · <a href="https://github.com/vitorcostadev" target="_blank" rel="noopener noreferrer">@vitorcostadev</a></span></footer>
+  </div>
+</div>
+<div class="overlay" id="overlay" hidden></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Detalhes da aula" aria-hidden="true"><div id="drawer-content"></div></aside>
+<div class="modal-backdrop" id="modal-backdrop" hidden><section class="settings-modal" role="dialog" aria-modal="true" aria-labelledby="settings-title" id="settings-content"></section></div>
+<input type="file" accept="application/json,.json" id="import-file" hidden>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

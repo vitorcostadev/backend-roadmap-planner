@@ -11,6 +11,10 @@ Aplicação estática para organizar duas trilhas complementares:
 
 A trilha das férias **não repete Java/Spring Boot**: reforça conhecimentos de Ciência da Computação e engenharia de software que complementam a formação backend.
 
+## Livros abertos para estudo
+
+A [biblioteca do Orbit](biblioteca/README.md) inclui PDFs com licença aberta de *Open Data Structures* (Java, C++ e pseudocódigo), além do link oficial para baixar *Pro Git*. Todos aparecem na aba **Biblioteca** do site. Os livros comerciais encontrados na BibliotecaDev são apenas referências bibliográficas.
+
 ## Funcionalidades
 
 - Navegação em dois planos com progresso **separado**.

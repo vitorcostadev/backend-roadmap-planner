@@ -101,7 +101,9 @@ function renderExtension(){
  return prefix+native+extra+'</div>'+(tab==='recover'?recoveryView():tab==='reviews'?reviewsView():tab==='quiz'?quizView():original.slice(end+6));
 }
 api.render=renderExtension;
-document.addEventListener('click',e=>{if(e.target.closest('[data-vac-tab]')){tab=null;lastAnswers=null;preview=null}},true);
+document.addEventListener('click',e=>{if(e.target.closest('[data-vac-tab]')){tab=null;lastAnswers=null;preview=null}if(e.target.closest('[data-vac-tab],[data-vac-filter],[data-vac-mode],[data-vac-shift],[data-vac-today],[data-vac-date],[data-vac-lesson],[data-vac-close],[data-vac-break],[data-vac-reset],[data-vac-reset-breaks],[data-vac-restart]')){preview=null;requestAnimationFrame(repaint)}},true);
+document.addEventListener('change',e=>{if(e.target.hasAttribute('data-vac-weekday')){preview=null;requestAnimationFrame(repaint)}},true);
+document.addEventListener('submit',e=>{if(e.target.id==='vac-lesson-form'){preview=null;requestAnimationFrame(repaint)}},true);
 document.addEventListener('click',e=>{
  const b=e.target.closest('[data-lab-tab],[data-lab-preview],[data-lab-apply],[data-lab-review],[data-lab-next]');
  if(!b)return;

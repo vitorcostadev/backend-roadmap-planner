@@ -55,6 +55,13 @@ Acesse `http://localhost:8000`. Mantenha os arquivos `index.html`, `styles.css`,
 - **Simulado:** banco de 15 perguntas originais e rodadas de cinco questões sobre algoritmos, C, sistemas, redes e documentação, com feedback explicado. Não substitui testes de programação.
 - Esses dados adicionais permanecem no **mesmo backup JSON** das férias e no armazenamento local. Não há sincronização na nuvem.
 
+## Ajustes de confiabilidade do calendário
+
+- As datas remarcadas manualmente são reservadas antes da distribuição automática: o Orbit não coloca silenciosamente duas aulas no mesmo horário.
+- As capacidades semanais de 0, 2 ou 4 horas influenciam tanto a agenda padrão quanto a prévia de reorganização; conflitos remanescentes são destacados.
+- Reorganizações anteriores permanecem identificadas como automáticas para que possam ser feitas novamente. Aulas concluídas e remarcações manuais continuam protegidas.
+- Todo esse estado acompanha a exportação/importação do backup JSON; não existe sincronização em nuvem.
+
 ## O que ainda está planejado
 
 - Painel integrado de domínio por competência (a ser aprofundado com testes práticos).

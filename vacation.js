@@ -20,10 +20,26 @@ const persist=()=>{try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){
 const itemState=id=>({status:'Pendente',hours:'',note:'',evidence:'',...(state.lessons[id]||{})});
 const complete=id=>itemState(id).status==='Concluída';
 function schedule(){
- let slots=[],all=[];
- for(let date=DATA.start;date<=DATA.end;date=add(date,1)){all.push(date);if(state.weekdays.includes(weekDay(date))&&!state.breaks.includes(date))slots.push(date)}
- let out=DATA.days.map((day,i)=>({...day,scheduled:state.overrides[day.id]||slots[i]||null}));
- return {list:out,slots,all,overflow:out.filter(x=>!x.scheduled).length};
+ const capacities=Array.isArray(state.studyCaps)&&state.studyCaps.length===7?state.studyCaps:[2,2,2,2,2,2,0];
+ const room=date=>state.weekdays.includes(weekDay(date))&&!state.breaks.includes(date)?Math.max(0,Math.floor(Number(capacities[weekDay(date)]||0)/2)):0;
+ const occupied=new Map(),slots=[],out=[];
+ for(const day of DATA.days)if(Object.prototype.hasOwnProperty.call(state.overrides,day.id)&&state.overrides[day.id]){
+   const date=state.overrides[day.id];occupied.set(date,(occupied.get(date)||0)+1);
+ }
+ for(let date=DATA.start;date<=DATA.end;date=add(date,1)){
+   const free=Math.max(0,room(date)-(occupied.get(date)||0));
+   for(let i=0;i<free;i++)slots.push(date);
+ }
+ let cursor=0;
+ for(const day of DATA.days){
+   const manual=Object.prototype.hasOwnProperty.call(state.overrides,day.id);
+   const date=manual?state.overrides[day.id]:(slots[cursor++]||null);
+   out.push({...day,scheduled:date||null});
+ }
+ const counts=new Map();
+ for(const day of out)if(day.scheduled)counts.set(day.scheduled,(counts.get(day.scheduled)||0)+1);
+ const collisions=[...counts].filter(([date,count])=>count>room(date)).map(([date,count])=>({date,count,capacity:room(date)}));
+ return {list:out,slots,overflow:out.filter(x=>!x.scheduled).length,collisions};
 }
 let computed=schedule();
 const tasksOn=date=>computed.list.filter(x=>x.scheduled===date).sort((a,b)=>a.number-b.number);
@@ -34,7 +50,7 @@ function header(){
  return `<div class="page-heading vac-heading"><div><div class="eyebrow">SEGUNDA TRILHA · INDEPENDENTE</div><h1 class="page-title">Computer Science Lab<span class="vac-accent">.</span></h1><p class="section-subtitle">Férias de 07/12/2026 a 01/03/2027 · lógica, C, sistemas, redes e inglês técnico.</p></div><span class="vac-tag">Não interfere nas 203 aulas de backend</span></div>
  <section class="vac-hero"><div><span class="vac-hero-eyebrow">MODO FÉRIAS / 2026—27</span><h2>Entenda os fundamentos.<br><em>Construa com autonomia.</em></h2><p>Uma trilha paralela e complementar ao Java/Spring: 69 sessões práticas, 2h por sessão, domingos livres e pausas de fim de ano.</p></div><div class="vac-ring" style="--vac-progress:${pct}%"><strong>${pct}%</strong><span>concluído</span></div></section>
  <div class="vac-metrics"><div><span>ATIVIDADES</span><strong>${n} <small>/ ${DATA.days.length}</small></strong></div><div><span>CARGA PREVISTA</span><strong>${DATA.days.length*2}<small>h</small></strong></div><div><span>HORAS REGISTRADAS</span><strong>${hours.toFixed(1).replace('.',',')}<small>h</small></strong></div><div><span>AULAS SEM DATA</span><strong>${computed.overflow}</strong></div></div>
- ${computed.overflow?`<div class="vac-warning" role="status">Existem ${computed.overflow} aulas sem espaço até 01/03/2027. Ajuste os dias disponíveis ou reduza as pausas.</div>`:''}`;
+ ${computed.overflow?`<div class="vac-warning" role="status">Existem ${computed.overflow} aulas sem espaço até 01/03/2027. Ajuste os dias disponíveis ou reduza as pausas.</div>`:''}${computed.collisions.length?`<div class="vac-warning" role="status">Há ${computed.collisions.length} data(s) acima da capacidade ou em dias bloqueados. Revise as remarcações manuais.</div>`:''}`;
 }
 function trackNav(){
  return `<div class="vac-tracks"><button data-vac-filter="all" class="${state.filter==='all'?'active':''}">Todas as áreas</button>${Object.entries(DATA.tracks).map(([k,v])=>`<button data-vac-filter="${k}" class="${state.filter===k?'active':''}"><span style="background:${v.color}"></span>${h(v.name)}</button>`).join('')}</div>`;
@@ -108,12 +124,12 @@ document.addEventListener('click',e=>{
  if(b.hasAttribute('data-vac-lesson')){update(()=>{state.selectedLesson=b.dataset.vacLesson;state.selectedDate=null});return}
  if(b.hasAttribute('data-vac-close')){update(()=>{state.selectedDate=null;state.selectedLesson=null});return}
  if(b.hasAttribute('data-vac-break')){update(()=>{const date=b.dataset.vacBreak;state.breaks=state.breaks.includes(date)?state.breaks.filter(x=>x!==date):[...state.breaks,date].sort();state.selectedLesson=null});return}
- if(b.hasAttribute('data-vac-reset')){update(()=>{delete state.overrides[b.dataset.vacReset]});return}
+ if(b.hasAttribute('data-vac-reset')){update(()=>{delete state.overrides[b.dataset.vacReset];state.reflowIds=(state.reflowIds||[]).filter(x=>x!==b.dataset.vacReset)});return}
  if(b.hasAttribute('data-vac-reset-breaks')){update(()=>{state.breaks=[...base.breaks]});return}
  if(b.hasAttribute('data-vac-export')){let blob=new Blob([JSON.stringify({type:'orbit-vacation-study',version:1,state},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='orbit-ferias-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);return}
- if(b.hasAttribute('data-vac-restart')&&confirm('Restaurar as datas automáticas de todas as aulas de férias? Suas anotações e conclusões serão preservadas.')){update(()=>{state.overrides={}});return}
+ if(b.hasAttribute('data-vac-restart')&&confirm('Restaurar as datas automáticas de todas as aulas de férias? Suas anotações e conclusões serão preservadas.')){update(()=>{state.overrides={};state.reflowIds=[]});return}
 });
-document.addEventListener('change',e=>{const input=e.target;if(input.hasAttribute('data-vac-weekday')){const i=Number(input.dataset.vacWeekday);if(!input.checked&&state.weekdays.length<=1){input.checked=true;alert('Selecione ao menos um dia de estudo.');return}update(()=>{state.weekdays=input.checked?[...state.weekdays,i].sort((a,b)=>a-b):state.weekdays.filter(x=>x!==i)})}});
-document.addEventListener('submit',e=>{if(e.target.id!=='vac-lesson-form')return;e.preventDefault();const form=e.target,id=form.dataset.id,date=form.elements.namedItem('date').value;if(!date||date<DATA.start||date>DATA.end){alert('A data precisa ficar dentro do período de férias.');return}const hrs=form.elements.namedItem('hours').value;if(hrs!==''&&(!Number.isFinite(Number(hrs))||Number(hrs)<0||Number(hrs)>24)){alert('Horas inválidas.');return}update(()=>{state.overrides[id]=date;const status=form.elements.namedItem('status').value,prior=state.lessons[id]||{};state.lessons[id]={status,hours:hrs,note:form.elements.namedItem('note').value,evidence:form.elements.namedItem('evidence').value,completedAt:status==='Concluída'?(prior.completedAt||new Date().toISOString().slice(0,10)):''}});});
-window.OrbitVacation={render,backup,restore,course:DATA};
+document.addEventListener('change',e=>{const input=e.target;if(input.hasAttribute('data-vac-weekday')){const i=Number(input.dataset.vacWeekday);if(!input.checked&&state.weekdays.length<=1){input.checked=true;alert('Selecione ao menos um dia de estudo.');return}update(()=>{state.weekdays=input.checked?[...state.weekdays,i].sort((a,b)=>a-b):state.weekdays.filter(x=>x!==i);if(input.checked&&Array.isArray(state.studyCaps)&&Number(state.studyCaps[i])===0)state.studyCaps[i]=2})}});
+document.addEventListener('submit',e=>{if(e.target.id!=='vac-lesson-form')return;e.preventDefault();const form=e.target,id=form.dataset.id,date=form.elements.namedItem('date').value;if(!date||date<DATA.start||date>DATA.end){alert('A data precisa ficar dentro do período de férias.');return}const hrs=form.elements.namedItem('hours').value;if(hrs!==''&&(!Number.isFinite(Number(hrs))||Number(hrs)<0||Number(hrs)>24)){alert('Horas inválidas.');return}update(()=>{state.overrides[id]=date;state.reflowIds=(state.reflowIds||[]).filter(x=>x!==id);const status=form.elements.namedItem('status').value,prior=state.lessons[id]||{};state.lessons[id]={status,hours:hrs,note:form.elements.namedItem('note').value,evidence:form.elements.namedItem('evidence').value,completedAt:status==='Concluída'?(prior.completedAt||new Date().toISOString().slice(0,10)):''}});});
+window.OrbitVacation={render,backup,restore,scheduleSnapshot:()=>schedule(),course:DATA};
 })();

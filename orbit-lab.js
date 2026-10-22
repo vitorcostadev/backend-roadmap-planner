@@ -30,30 +30,37 @@ const questions=[
  {topic:'Inglês técnico',q:'O que um README reproduzível precisa apresentar?',opts:['Somente imagens','Pré-requisitos e passos de execução','Histórico pessoal','Somente a licença'],answer:1,why:'Pré-requisitos, instalação, execução e exemplos permitem reproduzir o resultado.'},
  {topic:'Algoritmos',q:'No pior caso, qual é a complexidade de buscar um elemento em um array não ordenado?',opts:['O(1)','O(log n)','O(n)','O(n log n)'],answer:2,why:'Pode ser necessário verificar cada um dos n elementos.'},
 ];
-function snapshot(){const st=api.backup();st.studyCaps=Array.isArray(st.studyCaps)&&st.studyCaps.length===7?st.studyCaps:defaults.slice();st.labReviews=st.labReviews||{};st.labAttempts=Array.isArray(st.labAttempts)?st.labAttempts:[];return st}
+function snapshot(){const st=api.backup();st.studyCaps=Array.isArray(st.studyCaps)&&st.studyCaps.length===7?st.studyCaps:defaults.slice();st.labReviews=st.labReviews||{};st.labAttempts=Array.isArray(st.labAttempts)?st.labAttempts:[];st.reflowIds=Array.isArray(st.reflowIds)?st.reflowIds:[];return st}
 function commit(st){api.restore(st);repaint()}
 function repaint(){const main=document.querySelector('#main');if(main&&location.hash.slice(1)==='vacation')main.innerHTML=api.render()}
-function scheduleCurrent(st){let slots=[];for(let day=data.start;day<=data.end;day=plus(day,1)){if(st.weekdays.includes(weekday(day))&&!st.breaks.includes(day))slots.push(day)}return data.days.map((lesson,i)=>({...lesson,scheduled:st.overrides[lesson.id]||slots[i]||null}));}
+function scheduleCurrent(st){
+ const days=st.studyCaps||defaults,occupied=new Map(),slots=[];
+ const cap=date=>st.weekdays.includes(weekday(date))&&!st.breaks.includes(date)?Math.floor(Number(days[weekday(date)]||0)/2):0;
+ for(const item of data.days){const manual=st.overrides[item.id];if(manual)occupied.set(manual,(occupied.get(manual)||0)+1)}
+ for(let date=data.start;date<=data.end;date=plus(date,1)){
+   const free=Math.max(0,cap(date)-(occupied.get(date)||0));
+   for(let i=0;i<free;i++)slots.push(date);
+ }
+ let position=0;
+ return data.days.map(item=>({...item,scheduled:Object.prototype.hasOwnProperty.call(st.overrides,item.id)?(st.overrides[item.id]||null):(slots[position++]||null)}));
+}
 function planned(st,start){
- const lessons=scheduleCurrent(st),pinned=new Set(),assigned={},occupied={};
+ const lessons=scheduleCurrent(st),pinned=new Set(),assigned={},occupied={},automatic=new Set(st.reflowIds||[]);
  for(const d of lessons){
    const finished=st.lessons[d.id]?.status==='Concluída';
-   const manual=Boolean(st.overrides[d.id]);
-   if((finished||manual)&&d.scheduled){pinned.add(d.id);if(d.scheduled>=start)occupied[d.scheduled]=(occupied[d.scheduled]||0)+1;}
+   const manual=Boolean(st.overrides[d.id])&&!automatic.has(d.id);
+   if(finished||manual){pinned.add(d.id);if(d.scheduled&&d.scheduled>=start)occupied[d.scheduled]=(occupied[d.scheduled]||0)+1;}
  }
- const slots=[];
+ const spaces=[];
  for(let day=start;day<=data.end;day=plus(day,1)){
-   const cap=Number(st.studyCaps[weekday(day)]||0);
-   if(st.weekdays.includes(weekday(day))&&!st.breaks.includes(day)&&cap>=2){
-     const remaining=Math.max(0,Math.floor(cap/2)-(occupied[day]||0));
-     for(let i=0;i<remaining;i++)slots.push(day);
-   }
+   const total=st.weekdays.includes(weekday(day))&&!st.breaks.includes(day)?Math.max(0,Math.floor(Number(st.studyCaps[weekday(day)]||0)/2)):0;
+   for(let i=0;i<Math.max(0,total-(occupied[day]||0));i++)spaces.push(day);
  }
  const movable=lessons.filter(d=>!pinned.has(d.id));
- movable.forEach((d,i)=>{if(i<slots.length)assigned[d.id]=slots[i]});
+ movable.forEach((d,i)=>{if(i<spaces.length)assigned[d.id]=spaces[i]});
  const noRoom=movable.filter(d=>!assigned[d.id]);
  const changes=movable.filter(d=>assigned[d.id]&&d.scheduled!==assigned[d.id]).map(d=>({id:d.id,topic:d.topic,from:d.scheduled,to:assigned[d.id]}));
- return {changes,noRoom,assigned,pinned:pinned.size,untouched:movable.length-changes.length,capacity:slots.length};
+ return {changes,noRoom,assigned,pinned:pinned.size,untouched:movable.length-changes.length,capacity:spaces.length};
 }
 function tabBtn(key,title){return '<button type="button" data-lab-tab="'+key+'" class="'+(tab===key?'active':'')+'">'+title+'</button>'}
 function capacityInputs(st){return '<div class="lab-cap-grid">'+['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'].map((name,i)=>'<label>'+name+'<select data-lab-cap="'+i+'" aria-label="Horas de estudo '+name+'">'+[0,2,4].map(n=>'<option value="'+n+'" '+(Number(st.studyCaps[i])===n?'selected':'')+'>'+n+'h</option>').join('')+'</select></label>').join('')+'</div>';}
@@ -114,7 +121,7 @@ document.addEventListener('click',e=>{
   const fresh=planned(st,fromDate);
   if(!preview||fresh.noRoom.length){alert('Não há espaço suficiente ou a prévia não está atualizada.');return}
   if(!confirm('Confirmar a nova agenda? Serão remarcadas '+fresh.changes.length+' aulas. O progresso, as aulas concluídas e as datas manuais serão preservados.'))return;
-  for(const [id,date] of Object.entries(fresh.assigned))st.overrides[id]=date;
+  for(const [id,date] of Object.entries(fresh.assigned))st.overrides[id]=date;st.reflowIds=Object.keys(fresh.assigned);
   preview=null;commit(st);return
  }
  if(b.hasAttribute('data-lab-review')){

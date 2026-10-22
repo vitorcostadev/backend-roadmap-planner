@@ -40,3 +40,7 @@ Repositório consultado: https://github.com/KAYOKG/BibliotecaDev
 - Open_Data_Structures_Java.pdf : a2bfbe56f09897ded27c535cca87f92be45470df2983003b1040c09281beaa30
 - ODS_CPP.pdf : 3fbbe5febd0e84f79c509cca28a0be93deef0ab045999b5efc78af9e913088f4
 - ODS_Pseudocodigo.pdf : 2bdd7e8129fff83daf04cd594fce5236d72b1d8b8c72832fde22ea762a7e014f
+
+## Edição pessoal de Entendendo Algoritmos
+
+O estudante possui uma cópia pessoal da edição brasileira de 2017 (Novatec). O PDF **não está neste repositório**, pois a própria edição proíbe reprodução sem autorização. Para estudar com ele, acesse **Orbit → Biblioteca → Meus PDFs** e faça importação local. [Guia de capítulos e exercícios](GUIA_ENTENDENDO_ALGORITMOS.md).

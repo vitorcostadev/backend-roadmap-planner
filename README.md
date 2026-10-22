@@ -15,6 +15,10 @@ A trilha das férias **não repete Java/Spring Boot**: reforça conhecimentos de
 
 A [biblioteca do Orbit](biblioteca/README.md) inclui PDFs com licença aberta de *Open Data Structures* (Java, C++ e pseudocódigo), além do link oficial para baixar *Pro Git*. Todos aparecem na aba **Biblioteca** do site. Os livros comerciais encontrados na BibliotecaDev são apenas referências bibliográficas.
 
+## Livros pessoais (não publicados)
+
+No menu **Biblioteca → Meus PDFs**, você pode importar legitimamente sua cópia de *Entendendo Algoritmos*, de Aditya Bhargava. O arquivo fica apenas no IndexedDB do navegador, sem upload para o GitHub ou backend; ele não integra o backup JSON. Consulte o [guia de leitura](biblioteca/GUIA_ENTENDENDO_ALGORITMOS.md) para exercícios associados ao Computer Science Lab. O PDF comercial não é redistribuído publicamente.
+
 ## Funcionalidades
 
 - Navegação em dois planos com progresso **separado**.

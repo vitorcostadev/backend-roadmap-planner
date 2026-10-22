@@ -48,10 +48,16 @@ python -m http.server 8000
 
 Acesse `http://localhost:8000`. Mantenha os arquivos `index.html`, `styles.css`, `data.js`, `vacation-data.js`, `vacation.js` e `app.js` na mesma pasta.
 
+## Ferramentas de aprendizagem — atualização 1.2
+
+- **Reorganizar:** prévia das aulas pendentes distribuídas a partir de uma data de retomada, capacidade configurável de 0/2/4h por dia da semana, respeitando pausas, datas manuais e aulas concluídas. **Nenhuma alteração é feita sem confirmação.**
+- **Revisões:** recuperação ativa das sessões concluídas, com intervalos sugeridos de 1, 3, 7, 14 e 30 dias conforme a autoavaliação.
+- **Simulado:** banco de 15 perguntas originais e rodadas de cinco questões sobre algoritmos, C, sistemas, redes e documentação, com feedback explicado. Não substitui testes de programação.
+- Esses dados adicionais permanecem no **mesmo backup JSON** das férias e no armazenamento local. Não há sincronização na nuvem.
+
 ## O que ainda está planejado
 
-- Capacidade personalizada de horas por dia e sugestão automática de redistribuição de atrasos.
-- Revisões espaçadas, questionários com correção e níveis de domínio por competência.
+- Painel integrado de domínio por competência (a ser aprofundado com testes práticos).
 - Sincronização segura entre dispositivos (requer backend/autenticação; não é oferecida pelo `localStorage`).
 - Melhorias adicionais de acessibilidade e interação touch para reagendamento.
 

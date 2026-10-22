@@ -1,33 +1,61 @@
-# Orbit — Plano de Estudos Backend
+# Orbit — Study OS
 
-Site estático pessoal para acompanhar **203 aulas (406 horas, 29 semanas)** de Java, SQL, Spring Boot e engenharia backend, a partir do plano em Excel.
+**[Abrir Orbit no GitHub Pages](https://vitorcostadev.github.io/backend-roadmap-planner/)**
 
-**Prévia funcional:** https://raw.githack.com/vitorcostadev/backend-roadmap-planner/main/index.html
+Aplicação estática para organizar duas trilhas complementares:
+
+| Trilha | Período | Conteúdo | Carga prevista |
+| --- | --- | --- | --- |
+| **Backend Java — Níveis 1 a 3** | Configurável | Java, SQL, Spring Boot, testes, segurança, Docker, CI/CD e LigaLab API | 203 aulas · 406h |
+| **Computer Science Lab — Férias 2026/27** | 07/12/2026 a 01/03/2027 | Algoritmos, estruturas de dados, C/memória, Linux/redes, inglês técnico e PathLab CLI | 69 aulas · 138h |
+
+A trilha das férias **não repete Java/Spring Boot**: reforça conhecimentos de Ciência da Computação e engenharia de software que complementam a formação backend.
 
 ## Funcionalidades
 
-- Calendário mensal e semanal; planejamento por data inicial e dias disponíveis.
-- Reagendamento individual por arrastar e soltar ou pela ficha da aula.
-- Teoria, exercício, revisão, evidência e fontes para cada dia.
-- Progresso por nível (N1–N3), horas reais e notas pessoais.
-- Biblioteca de 34 fontes, desafios, backlog e contrato de API LigaLab.
-- Rubricas e 30 testes de aceitação; backup do progresso em JSON.
-- Layout responsivo, modo claro/escuro e sem dependência de backend.
+- Navegação em dois planos com progresso **separado**.
+- Calendário mensal e semanal para ambos os planos.
+- Backend: data inicial e dias da semana configuráveis, reagendamento de aulas, projetos e critérios de aceitação.
+- Férias: calendário próprio, domingos livres por padrão, pausas pré-configuradas em 24/25/31 de dezembro e 1º de janeiro, seleção de dias de estudo, abertura de datas e reagendamento de sessões.
+- Aulas das férias com teoria, exercício, critério de aceitação, fonte, anotações, horas realizadas e evidências.
+- Biblioteca do roadmap original, desafios e validação do projeto LigaLab.
+- **PathLab CLI**, projeto integrador das férias com grafos, algoritmos de caminhos, dados de teste, testes e documentação.
+- Interface responsiva, tema claro/escuro e funcionamento sem servidor próprio.
+
+## Organização das férias
+
+- Duração: **85 dias corridos** (incluindo as duas datas-limite).
+- Dias com estudo por padrão: segunda a sábado, exceto pausas de fim de ano.
+- **69 sessões** de 120 minutos, com 25 min teoria, 65 min prática, 20 min testes e 10 min revisão.
+- Distribuição: 28 aulas de algoritmos, 17 de C/memória, 14 de Linux/redes, 7 de comunicação técnica e 3 de integração.
+- Se você configurar menos dias do que os 69 necessários, o Orbit sinaliza as aulas sem agendamento; não desloca o período para depois de 01/03/2027.
+
+## Persistência e privacidade
+
+Todos os registros são salvos no `localStorage` do **navegador e domínio atuais**. Não existem contas ou sincronização entre aparelhos nesta versão.
+
+**Exportar progresso** gera um JSON com o cronograma original e os registros das férias; **Importar backup** restaura ambos. Backups antigos (sem dados de férias) continuam aceitos e preservam o plano de férias que já estiver no navegador.
+
+Não publique seus backups no repositório: eles podem incluir anotações pessoais e evidências.
 
 ## Execução local
 
-Abra `index.html` no navegador ou execute `python -m http.server 8000` na raiz e acesse `http://localhost:8000`.
+Abra `index.html` ou execute:
 
-Os arquivos `data.js` e `app.js` devem permanecer na mesma pasta de `index.html`.
+```bash
+python -m http.server 8000
+```
 
-## Privacidade e persistência
+Acesse `http://localhost:8000`. Mantenha os arquivos `index.html`, `styles.css`, `data.js`, `vacation-data.js`, `vacation.js` e `app.js` na mesma pasta.
 
-O progresso fica no `localStorage` **deste navegador e desta origem**. Não há contas ou sincronização com a nuvem. Use **Exportar progresso** para fazer backup e **Importar backup** para restaurar. O progresso na prévia RawGitHack não será automaticamente transferido se o domínio público mudar.
+## O que ainda está planejado
 
-## GitHub Pages e domínio
+- Capacidade personalizada de horas por dia e sugestão automática de redistribuição de atrasos.
+- Revisões espaçadas, questionários com correção e níveis de domínio por competência.
+- Sincronização segura entre dispositivos (requer backend/autenticação; não é oferecida pelo `localStorage`).
+- Melhorias adicionais de acessibilidade e interação touch para reagendamento.
 
-GitHub Pages está configurado para publicar a partir de `main` (raiz). O perfil GitHub possui uma configuração de domínio personalizado `vitorcosta.me` no repositório `vitorcostadev.github.io`; o domínio é servido atualmente pela Heroku e não roteia o caminho deste projeto. **Isso faz a URL de Pages retornar 404**, embora o build de Pages seja concluído. A configuração do domínio não foi alterada por este projeto.
+## Publicação
 
-## Conteúdo
-
-Plano baseado nas seções **Plano diário**, **Semanas**, **Biblioteca**, **Projeto - Escopo**, **API e Dados**, **Backlog**, **Rubricas**, **Desafios**, **Entrevistas** e **Prova final** da planilha de estudos, com 203 aulas e carga diária de 2 horas.
+GitHub Pages configurado na branch `main`, raiz do repositório, sem domínio personalizado:
+https://vitorcostadev.github.io/backend-roadmap-planner/
